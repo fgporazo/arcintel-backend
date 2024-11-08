@@ -14,8 +14,4 @@ Route::prefix('v1')->group(function () {
     Route::post('users', [WebServiceController::class,'postUser']);
     Route::post('company', [WebServiceController::class,'postCompany']);
     Route::post('articles', [WebServiceController::class,'postArticle']);
-    /*********************************** START UPDATE ***********************************/
-    Route::put('users', [WebServiceController::class,'putUser']);
-    Route::put('company', [WebServiceController::class,'putCompany']);
-    Route::put('articles', [WebServiceController::class,'putArticle']);
 });

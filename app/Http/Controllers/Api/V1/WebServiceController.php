@@ -73,12 +73,16 @@ class WebServiceController extends Controller
     }
     /******************* START POST ***********************/
     public function postUser(Request $request){
+        if($request->has('id')){
+            return $this->fetchDataFromAPI('put', 'users/' . $request->id, $request->data);
+        }
         return $this->fetchDataFromAPI('post','users',$request->data);
     }
     public function postCompany(Request $request){
+        $data = [];
         $logo = '';
         $request->validate([
-            'fileUpload' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            // 'fileUpload' => 'required|image|mimes:jpeg,png,jpg',
             'name' => 'required|string',
             'status' => 'required|string'
         ]);
@@ -86,29 +90,33 @@ class WebServiceController extends Controller
             $path = $request->file('fileUpload')->store('logos', 'public');
             $url = Storage::url($path);
             $logo = $url;
+            $data['logo'] = $logo;
         }
         $data = [
-            'logo' => $logo,
             'name' => $request->name,
             'status' => $request->status
         ];
+        if($request->has('id')){
+            return $this->fetchDataFromAPI('put', 'company/' . $request->id, $data);
+        }
         return $this->fetchDataFromAPI('post','company',$data);
     }
     public function postArticle(Request $request){
+        $data = [];
         $image = '';
         $request->validate([
-            'fileUpload' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            // 'fileUpload' => 'required|image|mimes:jpeg,png,jpg',
             'title' => 'required|string',
-            'company' => 'required|string',
+            'content' => 'required|string',
             'status' => 'required|string'
         ]);
         if ($request->file('fileUpload')) {
             $path = $request->file('fileUpload')->store('articles', 'public');
             $url = Storage::url($path);
             $image = $url;
+            $data['image'] = $image;
         }
         $data = [
-            'image' => $image,
             'title' => $request->title,
             'link' => $request->link,
             'date' => Carbon::now()->format('m/d/Y'),
@@ -117,16 +125,9 @@ class WebServiceController extends Controller
             'writer' => $request->writer,
             'company' => $request->company
         ];
+        if($request->has('id')){
+            return $this->fetchDataFromAPI('put', 'articles/' . $request->id, $data);
+        }
         return $this->fetchDataFromAPI('post','articles',$data);
-    }
-    /******************* END UPDATE *********************/
-    public function putUser(Request $request){
-        return $this->fetchDataFromAPI('put','users',$request->data);
-    }
-    public function putCompany(Request $request){
-        return $this->fetchDataFromAPI('put','company',$request->data);
-    }
-    public function putArticle(Request $request){
-        return $this->fetchDataFromAPI('put','articles',$request->data);
     }
 }
